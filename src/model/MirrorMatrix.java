@@ -159,11 +159,29 @@ public class MirrorMatrix {
 	}
 
 	public boolean action(int n, int m, int k, String un, String line) {
-		if (line.equals("menu")) {
+		int row;
+		int column;
+		if (line.equals("MENU")) {
 			return false;
 		} else {
-
+			if(line.charAt(0)=='L') {
+				//implement
+			}
+			else {
+				if(m>9) {
+					row=getRow(line,0);
+					//implement
+				}
+			}
 			return true;
+		}
+	}
+	public int getRow(String line,int i) {
+		if(!Character.isDigit(line.charAt(i)))
+			return i-1;
+		else {
+			i++;
+			return getRow(line,i);
 		}
 	}
 }

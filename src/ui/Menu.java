@@ -66,6 +66,7 @@ public class Menu {
 		System.out.println(un+": "+k+" mirrors reamining");
 		System.out.println(mm.printMatrix());
 		String line = sc.nextLine();
+		line=line.toUpperCase();
 		boolean cont= mm.action(n,m,k,un,line);
 	}
 	
