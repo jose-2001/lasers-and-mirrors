@@ -7,7 +7,7 @@ import model.MirrorMatrix;
 public class Menu {
 
 	// constants
-	public static final int EXIT_OPTION = 17;
+	public static final int EXIT_OPTION = 3;
 
 	// attributes
 
@@ -32,11 +32,11 @@ public class Menu {
 	public void startMenu() {
 		String msg = getMenuText();
 		int dec;
-		do {
 			System.out.print(msg);
 			dec = Integer.parseInt(sc.nextLine());
 			decisionSwitch(dec);
-		} while (dec != EXIT_OPTION);
+			if(dec!=EXIT_OPTION)
+				startMenu();
 	}
 	public void decisionSwitch(int dec) {
 		switch (dec) {
@@ -59,6 +59,14 @@ public class Menu {
 		int m= Integer.parseInt(parts[2]);
 		int k= Integer.parseInt(parts[3]);
 		mm.startGame(n,m,k,un);
+		playing(n,m,k,un);
+		
+	}
+	public void playing(int n, int m, int k, String un) {
+		System.out.println(un+": "+k+" mirrors reamining");
+		System.out.println(mm.printMatrix());
+		String line = sc.nextLine();
+		boolean cont= mm.action(n,m,k,un,line);
 	}
 	
 }

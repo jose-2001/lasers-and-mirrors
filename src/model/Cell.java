@@ -19,6 +19,7 @@ public class Cell {
 		left=null;
 		up=null;
 		down=null;
+		content=' ';
 	}
 
 	public char getContent() {
@@ -60,5 +61,9 @@ public class Cell {
 	public void setDown(Cell down) {
 		this.down = down;
 	}
-	
+	@Override
+	public String toString() {
+		String result="["+content+"]";
+		return result;
+	}
 }
