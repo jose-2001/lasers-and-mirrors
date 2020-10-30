@@ -59,7 +59,8 @@ public class Menu {
 		int m= Integer.parseInt(parts[2]);
 		int k= Integer.parseInt(parts[3]);
 		mm.startGame(n,m,k,un);
-		playing(n,m,k,un);
+		System.out.println(mm.printMatrix());
+		//playing(n,m,k,un);
 		
 	}
 	public void playing(int n, int m, int k, String un) {

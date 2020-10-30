@@ -36,46 +36,41 @@ public class MirrorMatrix {
 	      ois.close();
 	}
 	public void startGame(int n, int m, int k, String un) {
-		createMatrix(n,m,k);
+		createMatrix(n,m);
 		createMirrors(n,m,k);
 	}
-	public void createMatrix(int n, int m, int k) {
+	public void createMatrix(int n, int m) {
+		System.out.println(n+","+m);
 		if (first==null)
-			first=new Cell();
-		addDown(m-1,first);
-		addRight(n-1,first);
-		fill(n-1,first.getDown());
+			first=new Cell(1,1);
+		addDown(n,2,first);
+		fill(m,first);
 		connect(first);
 	}
 	
-	public void addDown(int m, Cell current) {
-		if(m==0) {
-			
-		}
-		else {
-			Cell newCell= new Cell();
+	public void addDown(int totn, int n, Cell current) {
+		if(n<=totn){
+			Cell newCell= new Cell(n,1);
 			current.setDown(newCell);
 			newCell.setUp(current);
-			m--;
-			addDown(m,newCell);
+			n++;
+			addDown(totn,n,newCell);
 		}
 	}
-	public void addRight(int n, Cell current) {
-		if(n==0) {
-			
-		}
-		else {
-			Cell newCell= new Cell();
+	public void addRight(int totm,int m, Cell current) {
+		if(m<=totm){
+			Cell newCell= new Cell(current.getRow(),m);
 			current.setRight(newCell);
 			newCell.setLeft(current);
-			n--;
-			addRight(n,newCell);
+			m++;
+			addRight(totm,m,newCell);
 		}
 	}
-	public void fill(int n, Cell current) {
-		addRight(n,current);
-		if(current.getDown()!=null)
-			fill(n,current.getDown());
+	public void fill(int totm,Cell current) {
+		if(current!=null){
+			addRight(totm,current.getColumn()+1,current);
+			fill(totm,current.getDown());
+		}
 	}
 	public void connect(Cell current) {
 		if(current.getDown()!=null) {
@@ -90,12 +85,10 @@ public class MirrorMatrix {
 	}
 
 	public void createMirrors(int n, int m, int k) {
-		if (k == 0) {
-
-		} else {
+		if (k>0) {
 			Random rand = new Random();
-			int row = rand.nextInt(m);
-			int column = rand.nextInt(n);
+			int row = rand.nextInt(n)+1;
+			int column = rand.nextInt(m)+1;
 			int mir = rand.nextInt(2);
 			char pos;
 			switch (mir) {
@@ -106,58 +99,60 @@ public class MirrorMatrix {
 				pos = 92;// pos='\';
 				break;
 			}
-			getSpecificCell(row, column).setContent(pos);
-			k--;
+			Cell target=goToCellFrom(row, column,first);
+			if (!target.hasContent()) {
+				target.setContent(pos);
+				k--;
+			}
 			createMirrors(n, m, k);
 		}
 	}
 
-	public Cell getSpecificCell(int row, int column) {
-		int n=0;
-		int m=0;
-		return getSpecificCell(row,column,n,m,first);
-	}
-	public Cell getSpecificCell(int row, int column, int n, int m, Cell current) {
-		if(m==row&&n==column)
+	public Cell goToCellFrom(int row, int column, Cell current) {
+		System.out.println("Going to: "+row+","+column+" from: "+current);
+		if(current.getRow()==row&&current.getColumn()==column)
 			return current;
 		else {
-			if(n<column) {
-				current=current.getRight();
-				n++;
-			}
-			if(m<column) {
+			if(current.getRow()<row) {
 				current=current.getDown();
-				m++;
 			}
-			return getSpecificCell(row,column,n,m,current);
+			if(current.getRow()>row) {
+				current=current.getUp();
+			}
+			if(current.getColumn()<column) {
+				current=current.getRight();
+			}
+			if(current.getColumn()>column) {
+				current=current.getLeft();
+			}
+			return goToCellFrom(row,column,current);
 		}
 	}
 	public String printMatrix() {
 		String result="";
 		if(first!=null) {
-			result=printMatrixRight(first,result);
-			result=printMatrixDown(first.getDown(),result);
+			result=printMatrix(first,result);
 		}
 		else
 			result="Matrix is empty";
 		return result;
 	}
-	public String printMatrixRight(Cell current, String prev) {
-		String result = prev;
+	public String printMatrix(Cell current, String prev) {
+		String result = printRow(current, prev);
+		if (current.getDown() != null)
+			result = printMatrix(current.getDown(), result);
+		return result;
+	}
+	
+	public String printRow(Cell current, String prev) {
+		String result = prev+" "+current.toString();
 		if (current.getRight() != null) {
-			result = printMatrixRight(current.getRight(), prev);
+			result = printRow(current.getRight(), result);
 		} else {
 			result += "\n";
 		}
 		return result;
 	}
-	public String printMatrixDown(Cell current, String prev) {
-		String result="";
-		result=printMatrixRight(current,prev);
-		result=printMatrixRight(current.getDown(),result);
-		return result;
-	}
-
 	public boolean action(int n, int m, int k, String un, String line) {
 		int row;
 		int column;

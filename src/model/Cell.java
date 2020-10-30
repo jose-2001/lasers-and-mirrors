@@ -5,6 +5,8 @@ public class Cell {
 	//attributes
 	
 	char content;
+	int row;
+	int column;
 	
 	//relations
 	
@@ -20,6 +22,15 @@ public class Cell {
 		up=null;
 		down=null;
 		content=' ';
+	}
+	public Cell(int r, int c) {
+		right=null;
+		left=null;
+		up=null;
+		down=null;
+		content=' ';
+		row=r;
+		column=c;
 	}
 
 	public char getContent() {
@@ -61,9 +72,34 @@ public class Cell {
 	public void setDown(Cell down) {
 		this.down = down;
 	}
+	public int getRow() {
+		return row;
+	}
+	public void setRow(int row) {
+		this.row = row;
+	}
+	public int getColumn() {
+		return column;
+	}
+	public void setColumn(int column) {
+		this.column = column;
+	}
+	public boolean hasContent() {
+		return content!=' ';
+	}
 	@Override
 	public String toString() {
-		String result="["+content+"]";
+		//
+		String result="["+row+","+column+": "+content+"]";
+		return result;
+	}
+	public String printCon() {
+		String result=toString()+"\n"
+				+ "up:"+(up!=null?up.toString():"")+"\n"
+				+ "right:"+(right!=null?right.toString():"")+"\n"
+				+ "down:"+(down!=null?down.toString():"")+"\n"
+				+ "left:"+(left!=null?left.toString():"")+"\n";
+				
 		return result;
 	}
 }
