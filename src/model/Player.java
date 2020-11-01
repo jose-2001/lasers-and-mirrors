@@ -10,13 +10,14 @@ public class Player implements Serializable,Comparable<Player>{
 
 	//attributes
 	
-	String username;
-	long score;
+	private String username;
+	private long score;
 	
 	//relations
 	
 	private Player left;
 	private Player right;
+	private Player p;
 	
 	//methods
 	
@@ -57,10 +58,26 @@ public class Player implements Serializable,Comparable<Player>{
 		this.right = right;
 	}
 
+	public Player getP() {
+		return p;
+	}
+
+	public void setP(Player p) {
+		this.p = p;
+	}
+
 	@Override
 	public int compareTo(Player p) {
-		
-		return 0;
+		if(p.getScore()>score)
+		return -1;
+		else if(p.getScore()<score)
+			return 1;
+		else
+			return 0;
 	}
-	
+	@Override
+	public String toString() {
+		String result="Username: "+getUsername()+". Score: "+getScore();
+		return result;
+	}
 }

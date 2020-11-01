@@ -2,8 +2,11 @@ package model;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Random;
 
 import exceptions.GameQuitException;
@@ -48,6 +51,11 @@ public class MirrorMatrix {
 	      ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
 	      root = (Player)ois.readObject();
 	      ois.close();
+	}
+	private void savePlayers() throws FileNotFoundException, IOException {
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(PLAYERS_FILE_NAME));
+	    oos.writeObject(root);
+	    oos.close();
 	}
 	public int getMirrorsLeft() {
 		return mirrorsLeft;
@@ -393,7 +401,7 @@ public class MirrorMatrix {
 			return getRowDigits(line,i);
 		}
 	}
-	public void calculateScore(String un) {
+	public void calculateScore(String un) throws FileNotFoundException, IOException {
 		currentScore+=100*mirrorsLeft;
 		Player newPlayer=new Player(un,currentScore);
 		if(root==null)
@@ -401,7 +409,7 @@ public class MirrorMatrix {
 		else
 			addPlayer(newPlayer,root);
 	}
-	public void addPlayer(Player toAdd, Player current) {
+	public void addPlayer(Player toAdd, Player current) throws FileNotFoundException, IOException {
 		if ((current.compareTo(toAdd) > 0) && (current.getLeft() == null)) {
 			current.setLeft(toAdd);
 			toAdd.setP(current);
@@ -411,15 +419,31 @@ public class MirrorMatrix {
 				toAdd.setP(current);
 			}else {
 				if ((current.compareTo(toAdd) < 0) && !(current.getRight() == null)) {
-					addEmployee(toAdd,current.getRight());
+					addPlayer(toAdd,current.getRight());
 				}
 				else {
 					if ((current.compareTo(toAdd) > 0) && !(current.getLeft() == null)) {
-						addEmployee(toAdd,current.getLeft());
+						addPlayer(toAdd,current.getLeft());
 					}
 				}
 			}
 		}
-
+		savePlayers();
+	}
+	public String showScores() {
+		String result=showScores(root,"",1);
+		return result;
+	}
+	public String showScores(Player current, String prev,int pos) {
+		String result=prev;
+		if(current.getLeft()!=null)
+			return showScores(current.getLeft(),prev,pos);
+		else {
+			result+=pos+". "+current.toString();
+			pos++;
+			if (current.getRight() != null)
+				return showScores(current.getRight(), prev, pos);
+		}
+		return result;
 	}
 }

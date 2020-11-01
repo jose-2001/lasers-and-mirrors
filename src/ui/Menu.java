@@ -1,7 +1,8 @@
 package ui;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
-
 import exceptions.GameQuitException;
 import exceptions.InvalidShootingCellException;
 import model.MirrorMatrix;
@@ -46,7 +47,7 @@ public class Menu {
 			play();
 			break;
 		case 2:
-			//registerProduct();
+			showScores();
 			break;
 		case 3:
 			System.out.println("Goodbye!");
@@ -91,8 +92,17 @@ public class Menu {
 			playing(n, m, un);
 		}
 	}
-	public void finishGame(String un) {
-		mm.calculateScore(un);
-	}
 
+	public void finishGame(String un) {
+		try {
+			mm.calculateScore(un);
+		} catch (FileNotFoundException e) {
+			System.err.println("The file where the Restaurant data is to be saved could not be found");
+		} catch (IOException e) {
+			System.err.println("Restaurant data could not be saved properly");
+		}
+	}
+	public void showScores() {
+		System.out.println(mm.showScores());
+	}
 }
