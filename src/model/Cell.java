@@ -119,23 +119,27 @@ public class Cell {
 	public void setWrong(boolean wrong) {
 		this.wrong = wrong;
 	}
-	@Override
-	public String toString() {
+	
+	public String toString(boolean cheat) {
 		//
-		String result = "[" + row + "," + column + ": ";
+		String result="";
+		if(cheat)
+			 result = "[" + row + "," + column + ": ";
+		else
+			result ="[";
 		if (start && exit) {
-			result += "B" + "]";
+			result += "B]";
 		} else {
 			if (start) {
-				result += "S" + "]";
+				result += "S]";
 			} else {
 				if (exit) {
-					result += "E" + "]";
+					result += "E]";
 				} else {
 					if (wrong)
-						result += "X" + "]";
+						result += "X]";
 					else {
-						result += content + "]";
+						result += ((cheat)?content:" ")+ "]";
 					}
 				}
 			}

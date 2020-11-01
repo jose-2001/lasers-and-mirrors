@@ -10,7 +10,7 @@ import model.MirrorMatrix;
 public class Menu {
 
 	// constants
-	public static final int EXIT_OPTION = 3;
+	public static final int EXIT_OPTION = 4;
 
 	// attributes
 
@@ -21,7 +21,14 @@ public class Menu {
 
 	public Menu() {
 		sc = new Scanner(System.in);
-		mm = new MirrorMatrix ();
+		try {
+			mm = new MirrorMatrix();
+		} catch (IOException ioe) {
+			System.err.println("Score data could not be loaded properly");
+			ioe.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			System.err.println("The class was not found");
+		}
 	}
 	public String getMenuText() {
 		String menu = "";
@@ -29,7 +36,8 @@ public class Menu {
 		menu += "Type the option you want\n";
 		menu +=   "1. Play\n"
 				+ "2. Show Scores\n"
-				+ "3. Exit\n";
+				+ "3. Toggle cheat mode\n"
+				+ "4. Exit\n";
 	return menu;
 	}
 	public void startMenu() {
@@ -50,8 +58,14 @@ public class Menu {
 			showScores();
 			break;
 		case 3:
+			toggleCheat();
+			break;
+		case 4:
 			System.out.println("Goodbye!");
 			break;
+			default: 
+				System.out.println("Type a valid option");
+				break;
 		}
 	}
 	public void play() {
@@ -104,5 +118,9 @@ public class Menu {
 	}
 	public void showScores() {
 		System.out.println(mm.showScores());
+	}
+	public void toggleCheat() {
+		mm.toggleCheatMode();
+		System.out.println("Cheat mode: "+mm.isCheatMode());
 	}
 }
