@@ -7,6 +7,9 @@ public class Cell {
 	char content;
 	int row;
 	int column;
+	boolean found;
+	boolean start;
+	boolean exit;
 	
 	//relations
 	
@@ -31,6 +34,9 @@ public class Cell {
 		content=' ';
 		row=r;
 		column=c;
+		exit=false;
+		start=false;
+		found=false;
 	}
 
 	public char getContent() {
@@ -87,10 +93,43 @@ public class Cell {
 	public boolean hasContent() {
 		return content!=' ';
 	}
+	public boolean isFound() {
+		return found;
+	}
+	public void setFound(boolean found) {
+		this.found = found;
+	}
+	public boolean isStart() {
+		return start;
+	}
+	public void setStart(boolean start) {
+		this.start = start;
+	}
+	public boolean isExit() {
+		return exit;
+	}
+	public void setExit(boolean exit) {
+		this.exit = exit;
+	}
 	@Override
 	public String toString() {
 		//
-		String result="["+row+","+column+": "+content+"]";
+		String result="["+row+","+column+": ";
+		if (start && exit) {
+			result += "B" + "]";
+		} else {
+			if (start) {
+				result += "S" + "]";
+			} else {
+				if (exit) {
+					result += "E" + "]";
+				} else {
+					result += content + "]";
+				}
+			}
+		}
+		setStart(false);
+		setExit(false);
 		return result;
 	}
 	public String printCon() {

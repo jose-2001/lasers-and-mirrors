@@ -6,11 +6,22 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Random;
 
+import exceptions.InvalidShootingCellException;
+
 public class MirrorMatrix {
+	
 	//constants
 	
 	public static final String PLAYERS_FILE_NAME = "data/players.pla";
+	public static final int RIGHT = 0;
+	public static final int DOWN = 1;
+	public static final int LEFT= 2;
+	public static final int UP = 3;
 
+	//attributes
+	
+	private int mirrorsLeft;
+	
 	//relations
 	
 	private Player root;
@@ -35,9 +46,16 @@ public class MirrorMatrix {
 	      root = (Player)ois.readObject();
 	      ois.close();
 	}
+	public int getMirrorsLeft() {
+		return mirrorsLeft;
+	}
+	public void setMirrorsLeft(int mirrors) {
+		this.mirrorsLeft = mirrors;
+	}
 	public void startGame(int n, int m, int k, String un) {
 		createMatrix(n,m);
 		createMirrors(n,m,k);
+		setMirrorsLeft(k);
 	}
 	public void createMatrix(int n, int m) {
 		System.out.println(n+","+m);
@@ -153,30 +171,179 @@ public class MirrorMatrix {
 		}
 		return result;
 	}
-	public boolean action(int n, int m, int k, String un, String line) {
-		int row;
-		int column;
-		if (line.equals("MENU")) {
+	public boolean action(int n, int m, String un, String line) throws InvalidShootingCellException {	
+		if (line.equals("MENU")||mirrorsLeft==0) {
 			return false;
 		} else {
 			if(line.charAt(0)=='L') {
-				//implement
+				//implement locate((int n, int m, String un, String line)
 			}
 			else {
-				if(m>9) {
-					row=getRow(line,0);
-					//implement
-				}
+				shoot(n,m,un,line);
 			}
 			return true;
 		}
 	}
-	public int getRow(String line,int i) {
+	public void shoot(int n, int m, String un, String line) throws InvalidShootingCellException {
+		int row;
+		int column;
+		int rowDigits = getRowDigits(line, 0);
+		row = Integer.parseInt(line.substring(0, rowDigits));
+		column = line.charAt(rowDigits) - 64;
+		System.out.println("looking for: "+row+","+column);
+		int direction=-1;
+		if ((row == 1 && (column == 1 || column == m)) || (row == n && (column == 1 || column == m))) {
+			if (row == 1 && column == 1) {
+				switch (line.charAt(line.length() - 1)) {
+				case 'H':
+					direction = RIGHT;
+					break;
+				case 'V':
+					direction = DOWN;
+					break;
+				}
+			}
+			if (row == 1 && column == m) {
+				switch (line.charAt(line.length() - 1)) {
+				case 'H':
+					direction = LEFT;
+					break;
+				case 'V':
+					direction = DOWN;
+					break;
+				}
+			}
+			if (row == n && column == 1) {
+				switch (line.charAt(line.length() - 1)) {
+				case 'H':
+					direction = RIGHT;
+					break;
+				case 'V':
+					direction = UP;
+					break;
+				}
+			}
+			if (row == n && column == m) {
+				switch (line.charAt(line.length() - 1)) {
+				case 'H':
+					direction = LEFT;
+					break;
+				case 'V':
+					direction = UP;
+					break;
+				}
+			}
+		} else {
+			if(row == 1) 
+				direction = DOWN;
+			if(row==n)
+				direction=UP;
+			if(column== 1)
+				direction=RIGHT;
+			if(column== m)
+				direction=LEFT;
+		}
+		if(direction==-1) {
+			throw new InvalidShootingCellException();
+		}
+		Cell start=goToCellFrom(row,column,first);
+		Cell exit=getEnd(start,direction,un);
+		start.setStart(true);
+		exit.setExit(true);
+	}
+	
+	public Cell getEnd(Cell current, int direction, String un) {
+		if (current.getContent() == '/') {
+			switch(direction) {
+			case RIGHT:
+				direction=UP;
+				if(current.getUp()!=null)
+					return getEnd(current.getUp(),direction,un);
+				else
+					return current;
+			case DOWN:
+				direction=LEFT;
+				if(current.getLeft()!=null)
+					return getEnd(current.getLeft(),direction,un);
+				else
+					return current;
+			case LEFT:
+				direction=DOWN;
+				if(current.getDown()!=null)
+					return getEnd(current.getDown(),direction,un);
+				else
+					return current;
+			case UP:
+				direction=RIGHT;
+				if(current.getRight()!=null)
+					return getEnd(current.getRight(),direction,un);
+				else 
+					return current;
+			}
+		} else {
+			if (current.getContent() == 92) {
+				switch(direction) {
+				case RIGHT:
+					direction=DOWN;
+					if(current.getDown()!=null)
+						return getEnd(current.getDown(),direction,un);
+					else
+						return current;
+				case DOWN:
+					direction=RIGHT;
+					if(current.getRight()!=null)
+						return getEnd(current.getRight(),direction,un);
+					else 
+						return current;
+				case LEFT:
+					direction=UP;
+					if(current.getUp()!=null)
+						return getEnd(current.getUp(),direction,un);
+					else
+						return current;
+				case UP:
+					direction=LEFT;		
+					if(current.getLeft()!=null)
+						return getEnd(current.getLeft(),direction,un);
+					else
+						return current;
+				}
+			}
+			else {
+				switch(direction) {
+				case RIGHT:
+					if(current.getRight()==null)
+						return current;
+					else
+						return getEnd(current.getRight(),direction,un);
+				case DOWN:
+					if(current.getDown()==null)
+						return current;
+					else
+						return getEnd(current.getDown(),direction,un);
+				case LEFT:
+					if(current.getLeft()==null)
+						return current;
+					else
+						return getEnd(current.getLeft(),direction,un);
+				case UP:
+					if(current.getUp()==null)
+						return current;
+					else
+						return getEnd(current.getUp(),direction,un);
+				}
+			}
+		}
+		System.err.println("Error revise getEnd in mm");
+		return current;
+	}
+	
+	public int getRowDigits(String line,int i) {
 		if(!Character.isDigit(line.charAt(i)))
-			return i-1;
+			return i;
 		else {
 			i++;
-			return getRow(line,i);
+			return getRowDigits(line,i);
 		}
 	}
 }
