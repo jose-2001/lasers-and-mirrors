@@ -4,12 +4,13 @@ public class Cell {
 	
 	//attributes
 	
-	char content;
-	int row;
-	int column;
-	boolean found;
-	boolean start;
-	boolean exit;
+	private char content;
+	private int row;
+	private int column;
+	private boolean found;
+	private boolean start;
+	private boolean exit;
+	private boolean wrong;
 	
 	//relations
 	
@@ -37,6 +38,7 @@ public class Cell {
 		exit=false;
 		start=false;
 		found=false;
+		wrong=false;
 	}
 
 	public char getContent() {
@@ -111,10 +113,16 @@ public class Cell {
 	public void setExit(boolean exit) {
 		this.exit = exit;
 	}
+	public boolean isWrong() {
+		return wrong;
+	}
+	public void setWrong(boolean wrong) {
+		this.wrong = wrong;
+	}
 	@Override
 	public String toString() {
 		//
-		String result="["+row+","+column+": ";
+		String result = "[" + row + "," + column + ": ";
 		if (start && exit) {
 			result += "B" + "]";
 		} else {
@@ -124,12 +132,17 @@ public class Cell {
 				if (exit) {
 					result += "E" + "]";
 				} else {
-					result += content + "]";
+					if (wrong)
+						result += "X" + "]";
+					else {
+						result += content + "]";
+					}
 				}
 			}
 		}
 		setStart(false);
 		setExit(false);
+		setWrong(false);
 		return result;
 	}
 	public String printCon() {

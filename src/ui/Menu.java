@@ -2,6 +2,7 @@ package ui;
 
 import java.util.Scanner;
 
+import exceptions.GameQuitException;
 import exceptions.InvalidShootingCellException;
 import model.MirrorMatrix;
 
@@ -62,13 +63,12 @@ public class Menu {
 		int k= Integer.parseInt(parts[3]);
 		mm.startGame(n,m,k,un);
 		playing(n,m,un);
-		
+		finishGame(un);
 	}
 
 	public void playing(int n, int m, String un) {
 		System.out.println(un + ": " + mm.getMirrorsLeft() + " mirrors reamining");
 		System.out.println(mm.printMatrix());
-		//mm.clearStartAndExit(n,m);
 		System.out.println("Input move");
 		String line = sc.nextLine();
 		line = line.toUpperCase();
@@ -76,15 +76,23 @@ public class Menu {
 		try {
 			cont = mm.action(n, m, un, line);
 		} catch (InvalidShootingCellException e) {
-			System.err.println("You must shoot from a bordering cell");
+			System.err.println("You must shoot from a bordering cell and specify direction if corner cell");
 			playing(n, m, un);
 			// e.printStackTrace();
+		}catch(GameQuitException gqe) {
+			System.err.println("You will have a 100 point penalization for every mirror not found");
+			cont=false;
+		}
+		if(mm.isFinished()) {
+			System.out.println("Finished game!");
+			cont=false;
 		}
 		if (cont) {
 			playing(n, m, un);
-		} else {
-			// finishGame(un);
 		}
+	}
+	public void finishGame(String un) {
+		mm.calculateScore(un);
 	}
 
 }

@@ -2,7 +2,7 @@ package model;
 
 import java.io.Serializable;
 
-public class Player implements Serializable{
+public class Player implements Serializable,Comparable<Player>{
 	
 	//constants
 	
@@ -55,6 +55,12 @@ public class Player implements Serializable{
 
 	public void setRight(Player right) {
 		this.right = right;
+	}
+
+	@Override
+	public int compareTo(Player p) {
+		
+		return 0;
 	}
 	
 }

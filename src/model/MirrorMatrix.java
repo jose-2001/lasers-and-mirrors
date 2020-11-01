@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Random;
 
+import exceptions.GameQuitException;
 import exceptions.InvalidShootingCellException;
 
 public class MirrorMatrix {
@@ -21,6 +22,8 @@ public class MirrorMatrix {
 	//attributes
 	
 	private int mirrorsLeft;
+	private long currentScore;
+	private boolean finished;
 	
 	//relations
 	
@@ -33,7 +36,7 @@ public class MirrorMatrix {
 			try {
 				loadPlayers();
 			} catch (IOException ioe) {
-				System.err.println("Restaurant data could not be loaded properly");
+				System.err.println("Score data could not be loaded properly");
 				ioe.printStackTrace();
 			} catch (ClassNotFoundException cnfe) {
 				System.err.println("The class was not found");
@@ -52,10 +55,24 @@ public class MirrorMatrix {
 	public void setMirrorsLeft(int mirrors) {
 		this.mirrorsLeft = mirrors;
 	}
+	public long getCurrentScore() {
+		return currentScore;
+	}
+	public void setCurrentScore(long currentScore) {
+		this.currentScore = currentScore;
+	}
+	public boolean isFinished() {
+		return finished;
+	}
+	public void setFinished(boolean finished) {
+		this.finished = finished;
+	}
 	public void startGame(int n, int m, int k, String un) {
 		createMatrix(n,m);
 		createMirrors(n,m,k);
 		setMirrorsLeft(k);
+		setFinished(false);
+		setCurrentScore(0);
 	}
 	public void createMatrix(int n, int m) {
 		System.out.println(n+","+m);
@@ -171,18 +188,48 @@ public class MirrorMatrix {
 		}
 		return result;
 	}
-	public boolean action(int n, int m, String un, String line) throws InvalidShootingCellException {	
+	public boolean action(int n, int m, String un, String line) throws InvalidShootingCellException, GameQuitException {	
 		if (line.equals("MENU")||mirrorsLeft==0) {
-			return false;
+			throw new GameQuitException();
 		} else {
 			if(line.charAt(0)=='L') {
-				//implement locate((int n, int m, String un, String line)
+				locate(n, m, un, line);
 			}
 			else {
 				shoot(n,m,un,line);
 			}
-			return true;
+			currentScore++;
+			if(mirrorsLeft==0) {
+				setFinished(true);
+				return false;
+			}
+			else 
+				return true;
 		}
+	}
+	public void locate(int n, int m, String un, String line) {
+		int row;
+		int column;
+		int rowDigits = getRowDigits(line, 1);
+		row = Integer.parseInt(line.substring(1, rowDigits));
+		column = line.charAt(rowDigits) - 64;
+		System.out.println("locating: "+row+","+column);
+		Cell located =goToCellFrom(row,column,first);
+		char guess=' ';
+		switch (line.charAt(line.length() - 1)) {
+		case 'L':
+			guess = 92;
+			break;
+		case 'R':
+			guess = '/';
+			break;
+		}
+		if(located.getContent()==guess) {
+			located.setFound(true);
+			mirrorsLeft--;
+		}
+		else
+			located.setWrong(true);
 	}
 	public void shoot(int n, int m, String un, String line) throws InvalidShootingCellException {
 		int row;
@@ -345,5 +392,34 @@ public class MirrorMatrix {
 			i++;
 			return getRowDigits(line,i);
 		}
+	}
+	public void calculateScore(String un) {
+		currentScore+=100*mirrorsLeft;
+		Player newPlayer=new Player(un,currentScore);
+		if(root==null)
+			root=newPlayer;
+		else
+			addPlayer(newPlayer,root);
+	}
+	public void addPlayer(Player toAdd, Player current) {
+		if ((current.compareTo(toAdd) > 0) && (current.getLeft() == null)) {
+			current.setLeft(toAdd);
+			toAdd.setP(current);
+		} else {
+			if ((current.compareTo(toAdd) < 0) && (current.getRight() == null)) {
+				current.setRight(toAdd);
+				toAdd.setP(current);
+			}else {
+				if ((current.compareTo(toAdd) < 0) && !(current.getRight() == null)) {
+					addEmployee(toAdd,current.getRight());
+				}
+				else {
+					if ((current.compareTo(toAdd) > 0) && !(current.getLeft() == null)) {
+						addEmployee(toAdd,current.getLeft());
+					}
+				}
+			}
+		}
+
 	}
 }
