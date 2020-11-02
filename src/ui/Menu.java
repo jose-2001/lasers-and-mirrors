@@ -82,7 +82,7 @@ public class Menu {
 	}
 
 	public void playing(int n, int m, String un) {
-		System.out.println(un + ": " + mm.getMirrorsLeft() + " mirrors reamining");
+		System.out.println(un + ": " + mm.getMirrorsLeft() + " mirrors remaining");
 		System.out.println(mm.printMatrix());
 		System.out.println("Input move");
 		String line = sc.nextLine();

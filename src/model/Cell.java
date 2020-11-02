@@ -20,13 +20,7 @@ public class Cell {
 	private Cell down;
 	
 	//methods
-	public Cell() {
-		right=null;
-		left=null;
-		up=null;
-		down=null;
-		content=' ';
-	}
+	
 	public Cell(int r, int c) {
 		right=null;
 		left=null;
@@ -123,8 +117,9 @@ public class Cell {
 	public String toString(boolean cheat) {
 		//
 		String result="";
+		char col=(char)(column+64);
 		if(cheat)
-			 result = "[" + row + "," + column + ": ";
+			 result = "[" + row + "," + col + ": ";
 		else
 			result ="[";
 		if (start && exit) {
@@ -139,7 +134,7 @@ public class Cell {
 					if (wrong)
 						result += "X]";
 					else {
-						result += ((cheat)?content:" ")+ "]";
+						result += ((cheat||found)?content:" ")+ "]";
 					}
 				}
 			}

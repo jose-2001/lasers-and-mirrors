@@ -412,6 +412,7 @@ public class MirrorMatrix {
 		else {
 			addPlayer(newPlayer, root);
 		}
+		savePlayers();
 	}
 
 	public void addPlayer(Player toAdd, Player current) throws FileNotFoundException, IOException {
@@ -426,14 +427,16 @@ public class MirrorMatrix {
 		} else if ((current.compareTo(toAdd) >= 0) && (current.getLeft() != null)) {
 			addPlayer(toAdd, current.getLeft());
 		}
-
-		savePlayers();
 	}
 
 	public String showScores() {
-		Position pos= new Position(1);
-		String result = showScores(root, "",pos);
-		return result;
+		if (root == null)
+			return "There are no players registered";
+		else {
+			Position pos = new Position(1);
+			String result = showScores(root, "", pos);
+			return result;
+		}
 	}
 
 	public String showScores(Player current, String prev, Position pos) {
