@@ -70,6 +70,7 @@ public class Menu {
 	}
 	public void play() {
 		System.out.println("Input game parameters");
+		System.out.println("<username> <number of rows> <number of columns> <number of mirrors>");
 		String line=sc.nextLine();
 		String[] parts=line.split(" ");
 		String un= parts[0];
