@@ -79,7 +79,7 @@ public class Menu {
 		int k= Integer.parseInt(parts[3]);
 		mm.startGame(n,m,k,un);
 		playing(n,m,un);
-		finishGame(un);
+		finishGame(un,n,m,k);
 	}
 
 	public void playing(int n, int m, String un) {
@@ -100,7 +100,6 @@ public class Menu {
 			cont=false;
 		}
 		if(mm.isFinished()) {
-			System.out.println("Finished game!");
 			cont=false;
 		}
 		if (cont) {
@@ -108,9 +107,11 @@ public class Menu {
 		}
 	}
 
-	public void finishGame(String un) {
+	public void finishGame(String un, int n, int m, int k) {
+		System.out.println("Finished game!");
+		System.out.println(un+", your score was: "+mm.getCurrentScore());
 		try {
-			mm.calculateScore(un);
+			mm.calculateScore(un,n,m,k);
 		} catch (FileNotFoundException e) {
 			System.err.println("The file where the Restaurant data is to be saved could not be found");
 		} catch (IOException e) {

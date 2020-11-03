@@ -211,8 +211,8 @@ public class MirrorMatrix {
 				locate(n, m, un, line);
 			} else {
 				shoot(n, m, un, line);
-			}
-			currentScore++;
+				currentScore++;
+			}			
 			if (mirrorsLeft == 0) {
 				setFinished(true);
 				return false;
@@ -240,8 +240,10 @@ public class MirrorMatrix {
 		if (located.getContent() == guess) {
 			located.setFound(true);
 			mirrorsLeft--;
-		} else
+		} else {
 			located.setWrong(true);
+			currentScore += 5;
+		}
 	}
 
 	public void shoot(int n, int m, String un, String line) throws InvalidShootingCellException {
@@ -404,9 +406,9 @@ public class MirrorMatrix {
 		}
 	}
 
-	public void calculateScore(String un) throws FileNotFoundException, IOException {
+	public void calculateScore(String un, int n, int m, int k) throws FileNotFoundException, IOException {
 		currentScore += 100 * mirrorsLeft;
-		Player newPlayer = new Player(un, currentScore);
+		Player newPlayer = new Player(un, currentScore,n,m,k);
 		if (root == null)
 			root = newPlayer;
 		else {
