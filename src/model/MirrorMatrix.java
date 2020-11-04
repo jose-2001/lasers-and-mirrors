@@ -406,7 +406,7 @@ public class MirrorMatrix {
 		}
 	}
 
-	public void calculateScore(String un, int n, int m, int k) throws FileNotFoundException, IOException {
+	public String calculateScore(String un, int n, int m, int k) throws FileNotFoundException, IOException {
 		currentScore += 100 * mirrorsLeft;
 		Player newPlayer = new Player(un, currentScore,n,m,k);
 		if (root == null)
@@ -415,6 +415,8 @@ public class MirrorMatrix {
 			addPlayer(newPlayer, root);
 		}
 		savePlayers();
+		String result=un+", your score was: "+currentScore;
+		return result;
 	}
 
 	public void addPlayer(Player toAdd, Player current) throws FileNotFoundException, IOException {

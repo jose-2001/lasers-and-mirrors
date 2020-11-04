@@ -109,9 +109,8 @@ public class Menu {
 
 	public void finishGame(String un, int n, int m, int k) {
 		System.out.println("Finished game!");
-		System.out.println(un+", your score was: "+mm.getCurrentScore());
 		try {
-			mm.calculateScore(un,n,m,k);
+			System.out.println(mm.calculateScore(un,n,m,k));
 		} catch (FileNotFoundException e) {
 			System.err.println("The file where the Restaurant data is to be saved could not be found");
 		} catch (IOException e) {
